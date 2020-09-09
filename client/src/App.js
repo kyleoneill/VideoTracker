@@ -12,6 +12,11 @@ class App extends React.Component {
       username: ''
     }
   }
+  componentDidMount() {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    this.setState({token: token, username: username});
+  }
   handleLogin = (token, username) => {
     this.setState({token: token, username: username});
   }

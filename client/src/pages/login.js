@@ -40,7 +40,7 @@ class Login extends React.Component {
         if(this.state.signIn) {
             try {
                 let res = await login(this.state.username, this.state.password);
-                this.props.handleLogin(res.data.token, this.state.username);
+                this.login(res.data.token);
             }
             catch(err) {
                 if(err.response.status === 401) {
@@ -56,7 +56,7 @@ class Login extends React.Component {
         else {
             try {
                 let res = await createUser(this.state.username, this.state.password);
-                this.props.handleLogin(res.data.token, this.state.username);
+                this.login(res.data.token);
             }
             catch(err) {
                 if(err.response.status === 409) {
@@ -73,6 +73,11 @@ class Login extends React.Component {
                 }
             }
         }
+    }
+    login = (token) => {
+        localStorage.setItem('token', token);
+        localStorage.setItem('username', this.state.username);
+        this.props.handleLogin(token, this.state.username);
     }
     render() {
         return (
