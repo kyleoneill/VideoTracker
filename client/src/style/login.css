@@ -1,0 +1,29 @@
+.login-page {
+    text-align: left;
+  }
+  
+  .login-page form {
+    max-width: 25%;
+    align-content: center;
+  }
+  
+  .login-page .form-group {
+    text-align: left;
+  }
+
+  .login-page h1 {
+      margin-bottom: 2.5%;
+  }
+
+  .login-page .sign-in-form {
+      margin-bottom: 2.5%;
+  }
+
+  .login-page p {
+      display: inline;
+  }
+
+  .login-page .text-button {
+    cursor:pointer;
+    color:blue;
+  }
