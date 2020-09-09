@@ -44,7 +44,6 @@ Video.init({
     sequelize,
     modelName: "video"
 });
-Video.hasOne(Category);
 
 class User extends Model{}
 User.init({

@@ -1,0 +1,16 @@
+.home-page {
+    margin: 2.5%;
+}
+
+.home-page > h1 {
+    padding-bottom: 2%;
+}
+
+.home-page table {
+    max-width: 65%;
+}
+
+.home-page table.center {
+    margin-left: auto;
+    margin-right: auto;
+}
