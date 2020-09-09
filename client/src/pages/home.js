@@ -1,18 +1,18 @@
 import React from 'react';
 import '../style/home.css';
-import {getAllVideos, getAllCategories} from '../api';
+import {getAllVideos, getAllCategories, createVideo} from '../api';
 import {
     Alert,
+    Nav,
     Table
 } from 'react-bootstrap';
+import NewVideo from '../components/modalNewVideo';
 
-// TODO - nav bar. list videos, settings (change password, other config), logout
-// TODO - need a button to remove a video on the table (should have a confirm dialog) and update backend
-// TODO - need a way to add a video to the table and update backend
-// TODO - need a way to sort videos by category
-// TODO - need a dropdown box that lists all categories and an "all" option. Only display videos in table of that category
-// TODO - need a way to add/remove categories (options/settings or another page?)
-// TODO - I need to store the video's name, I actually can't believe I missed that - have to add it to database schema and backend
+function parseYoutubeLink(link) {
+    let splitLink = link.split("v=");
+    let verify = splitLink[1].split('&');
+    return verify[0]
+}
 
 class Home extends React.Component {
     constructor(props) {
@@ -26,21 +26,11 @@ class Home extends React.Component {
             categories: []
         }
     }
-    categoryToKeyValue = (categories) => {
-        let ret = ["filler"];
-        for(var i = 0; i < categories.length; i++) {
-            ret[i + 1] = categories[i].name;
-        }
-        return ret;
-    }
     async componentDidMount() {
         try {
             let videos = await getAllVideos(this.props.token);
-            videos = videos.data.videos;
             let categories = await getAllCategories(this.props.token);
-            categories = this.categoryToKeyValue(categories.data.categories);
-            videos.map((vid) => vid.categoryId = categories[vid.categoryId]);
-            this.setState({videos: videos, categories: categories});
+            this.setState({videos: videos.data.videos, categories: categories.data.categories});
         }
         catch(e) {
             this.setState({showAlert: true, alertText: "I NEED AN ERROR MESSAGE"});
@@ -50,6 +40,23 @@ class Home extends React.Component {
     dismissAlert = () => {
         this.setState({showAlert: false, alertText: "Error"});
     }
+    handleNewVideo = async (link, category) => {
+        try {
+            let parsedLink = parseYoutubeLink(link);
+            await createVideo(parsedLink, category, false, this.state.token);
+            let videos = this.state.videos;
+            videos.push({categoryId: category, favorite: false, link: parsedLink});
+            this.setState({videos: videos});
+        }
+        catch(e) {
+            if(e.response.status === 400) {
+                this.setState({showAlert: true, alertText: "This video is already in your list."});
+            }
+            else {
+                this.setState({showAlert: true, alertText: e});
+            }
+        }
+    }
     render() {
         return(
             <div className="home-page">
@@ -57,6 +64,11 @@ class Home extends React.Component {
                     <Alert.Heading>{this.state.alertText}</Alert.Heading>
                 </Alert> 
                 <h1>{this.props.appName}</h1>
+                <Nav className="nav">
+                    <Nav.Item>
+                        <NewVideo callback={this.handleNewVideo} categories={this.state.categories} />
+                    </Nav.Item>
+                </Nav>
                 <h3>Saved Videos - {this.state.username}</h3>
                 <Table striped bordered className="center">
                     <thead>
@@ -64,17 +76,19 @@ class Home extends React.Component {
                             <th>Link</th>
                             <th>Category</th>
                             <th>Favorite</th>
+                            <th>Remove</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.videos.map((value, index) => {
+                        {this.state.videos && this.state.videos.map((value, index) => {
                             return (
-                                <tr>
-                                    <td>
+                                <tr key={index}>
+                                    <td key={value.link}>
                                         <a href={`https://www.youtube.com/watch?v=${value.link}`} target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v={value.link}</a>
                                     </td>
-                                    <td>{value.categoryId}</td>
-                                    <td>{value.favorite}</td>
+                                    <td key={value.categoryId}>{value.categoryId}</td>
+                                    <td key={value.link + value.favorite} className="entity favorite">{value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}</td>
+                                    <td key={value.link + "-remove"} className="entity remove">&#x02A2F;</td>
                                 </tr>
                             )
                         })}

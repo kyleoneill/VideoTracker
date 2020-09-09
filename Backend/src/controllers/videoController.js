@@ -1,4 +1,4 @@
-const {Video, User} = require('../database');
+const {Video, User, Category} = require('../database');
 var jwt = require('jsonwebtoken');
 
 async function getUserId(username) {
@@ -19,16 +19,24 @@ exports.create = async (req, res) => {
                 var video = await Video.findOne({where: {link: req.query.link}});
                 if(video === null) {
                     var userId = await getUserId(decoded.username);
-                    await Video.create({
-                        link: req.query.link,
-                        categoryId: req.query.categoryId,
-                        favorite: req.query.favorite,
-                        userId: userId
-                    });
-                    console.log(`Added video to user ${decoded.username}`);
-                    return res.status(200).send({
-                        message: "Video added"
-                    });
+                    var category = await Category.findOne({where: {name: req.query.categoryName}});
+                    if(category !== null) {
+                        await Video.create({
+                            link: req.query.link,
+                            categoryId: category.id,
+                            favorite: req.query.favorite,
+                            userId: userId
+                        });
+                        console.log(`Added video to user ${decoded.username}`);
+                        return res.status(200).send({
+                            message: "Video added"
+                        });
+                    }
+                    else {
+                        return res.status(400).send({
+                            message: "Category provided does not exist"
+                        });
+                    }
                 }
                 else {
                     return res.status(400).send({
@@ -55,7 +63,9 @@ exports.getAll = async (req, res) => {
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
         if(!err) {
             let userId = await getUserId(decoded.username);
-            let videos = await Video.findAll({where: {userId: userId}});
+            let videos = await Video.findAll({attributes: ['link', 'categoryId', 'favorite']},{where: {userId: userId}});
+            let categories = await Category.findAll();
+            videos.map((vid) => vid.categoryId = categories[vid.categoryId - 1].name);
             return res.status(200).send({
                 videos: videos
             });

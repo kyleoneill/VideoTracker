@@ -6,6 +6,12 @@
     padding-bottom: 2%;
 }
 
+.home-page .nav {
+    margin: auto;
+    width: 50%;
+    margin-bottom: 2%;
+}
+
 .home-page table {
     max-width: 65%;
 }
@@ -13,4 +19,17 @@
 .home-page table.center {
     margin-left: auto;
     margin-right: auto;
+}
+
+.home-page .entity {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.home-page .remove {
+    color: red;
+}
+
+.home-page .favorite {
+    color: #f0c243;
 }

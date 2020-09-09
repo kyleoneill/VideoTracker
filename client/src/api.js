@@ -9,9 +9,13 @@ exports.login = async (username, password) => {
 }
 
 exports.getAllVideos = async(token) => {
-    return axios.get(`/api/video?token=${token}`)
+    return axios.get(`/api/video?token=${token}`);
+}
+
+exports.createVideo = async(link, categoryName, favorite, token) => {
+    return axios.post(`/api/video/create?link=${link}&categoryName=${categoryName}&favorite=${favorite}&token=${token}`);
 }
 
 exports.getAllCategories = async(token) => {
-    return axios.get(`/api/category?token=${token}`)
+    return axios.get(`/api/category?token=${token}`);
 }

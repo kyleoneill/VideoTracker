@@ -13,6 +13,15 @@
             "webRoot": "${workspaceFolder}"
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Backend",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\Backend\\src\\main.js"
+        },
+        {
             "name": "Attach",
             "type": "firefox",
             "request": "attach"

@@ -8,8 +8,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      token: '',
-      username: ''
+      token: null,
+      username: null
     }
   }
   componentDidMount() {
@@ -26,10 +26,10 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        {this.state.token === '' && 
+        {this.state.token === null && 
           <Login appName={appName} handleLogin={this.handleLogin}/>
         }
-        {this.state.token !== '' &&
+        {this.state.token !== null &&
           <Home appName={appName} token={this.state.token} username={this.state.username} handleLogout={this.handleLogout}/>
         }
       </div>
