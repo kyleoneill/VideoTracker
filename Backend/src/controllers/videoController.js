@@ -11,6 +11,7 @@ async function getUserId(username) {
     }
 }
 
+//token, link, categoryName, favorite
 exports.create = async (req, res) => {
     var token = req.query.token;
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
@@ -56,6 +57,40 @@ exports.create = async (req, res) => {
     });
 }
 
+//token, link, favorite
+exports.setFavorite = async (req, res) => {
+    var token = req.query.token;
+    jwt.verify(token, process.env.BACKEND_SECRET, async function (err, decoded) {
+        if(!err) {
+            try {
+                let userId = await getUserId(decoded.username);
+                let video = await Video.findOne({where: {link: req.query.link, userId: userId}});
+                if(video !== null) {
+                    video.favorite = req.query.favorite;
+                    video.save();
+                    return res.status(200).send({
+                        message: "Updated favorite for video"
+                    });
+                }
+                else {
+                    return res.status(400).send({
+                        message: "Requested video does not exist" 
+                    });
+                }
+            }
+            catch(e) {
+                return res.status(400).send({
+                    message: "Failed to set favorite, ensure that all parameters are included"
+                });
+            }
+        }
+        else {
+            res.send(err);
+        }
+    });
+}
+
+//token
 exports.getAll = async (req, res) => {
     //TODO - make this return X at a time. Pass it an index to start with and it'll return index..(index + X) or the end if it reaches that
     //Will need to return the list and the total # of videos so you know if you need to request again if you want the rest
@@ -76,6 +111,7 @@ exports.getAll = async (req, res) => {
     });
 }
 
+//token, link
 exports.deleteOne = async (req, res) => {
     var token = req.query.token;
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
@@ -99,6 +135,7 @@ exports.deleteOne = async (req, res) => {
     });
 }
 
+//token
 exports.deleteAll = async (req, res) => {
     // TODO
     var token = req.query.token;

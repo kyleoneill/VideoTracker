@@ -1,12 +1,19 @@
 import React from 'react';
 import '../style/home.css';
-import {getAllVideos, getAllCategories, createVideo} from '../api';
+import {
+    getAllVideos,
+    getAllCategories,
+    createVideo,
+    deleteVideo,
+    setVideoFavorite
+} from '../api';
 import {
     Alert,
     Nav,
     Table
 } from 'react-bootstrap';
 import NewVideo from '../components/modalNewVideo';
+import ModalConfirmDelete from '../components/confirmDelete';
 
 function parseYoutubeLink(link) {
     let splitLink = link.split("v=");
@@ -57,6 +64,19 @@ class Home extends React.Component {
             }
         }
     }
+    toggleVideoFavorite = async (index) => {
+        let videos = this.state.videos;
+        let video = videos[index]
+        await setVideoFavorite(video.link, !video.favorite, this.state.token);
+        videos[index].favorite = !videos[index].favorite;
+        this.setState({videos: videos});
+    }
+    videoDelete = async (index) => {
+        let videos = this.state.videos;
+        await deleteVideo(videos[index].link, this.state.token);
+        videos.splice(index, 1);
+        this.setState({videos: videos});
+    }
     render() {
         return(
             <div className="home-page">
@@ -87,8 +107,8 @@ class Home extends React.Component {
                                         <a href={`https://www.youtube.com/watch?v=${value.link}`} target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v={value.link}</a>
                                     </td>
                                     <td key={value.categoryId}>{value.categoryId}</td>
-                                    <td key={value.link + value.favorite} className="entity favorite">{value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}</td>
-                                    <td key={value.link + "-remove"} className="entity remove">&#x02A2F;</td>
+                                    <td key={value.link + value.favorite} onClick={() => this.toggleVideoFavorite(index)} className="entity favorite">{value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}</td>
+                                    <td key={value.link + "-remove"} className="entity remove"><ModalConfirmDelete objectType={"Video"} objectName={"PLACEHOLDER"} onConfirm={() => this.videoDelete(index)}/></td>
                                 </tr>
                             )
                         })}

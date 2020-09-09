@@ -17,6 +17,7 @@ router.post('/user/login', users.login);
 //logout is not needed. When logging out just delete the token on the client side
 
 router.post('/video/create', videos.create);
+router.put('/video/set_favorite', videos.setFavorite);
 router.get('/video', videos.getAll);
 router.delete('/video', videos.deleteAll);
 router.delete('/video/single', videos.deleteOne);
