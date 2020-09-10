@@ -24,6 +24,10 @@ Video.init({
         type: Sequelize.STRING,
         allowNull: false
     },
+    name: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     categoryId: {
         type: Sequelize.INTEGER,
         allowNull: true

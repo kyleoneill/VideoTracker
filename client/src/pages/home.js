@@ -51,9 +51,15 @@ class Home extends React.Component {
     handleNewVideo = async (link, category) => {
         try {
             let parsedLink = parseYoutubeLink(link);
-            await createVideo(parsedLink, category, false, this.state.token);
+            let res = await createVideo(parsedLink, category, false, this.state.token);
+            let newVideo = {
+                categoryId: res.data.video.categoryId,
+                favorite: res.data.video.favorite,
+                link: res.data.video.link,
+                name: res.data.video.name
+            };
             let videos = this.state.videos;
-            videos.push({categoryId: category, favorite: false, link: parsedLink});
+            videos.push(newVideo);
             this.setState({videos: videos});
         }
         catch(e) {
@@ -95,6 +101,7 @@ class Home extends React.Component {
                 <Table striped bordered className="center">
                     <thead>
                         <tr>
+                            <th>Name</th>
                             <th>Link</th>
                             <th>Category</th>
                             <th>Favorite</th>
@@ -105,6 +112,7 @@ class Home extends React.Component {
                         {this.state.videos && this.state.videos.map((value, index) => {
                             return (
                                 <tr key={index}>
+                                    <td key={value.link + "-name"}>{value.name}</td>
                                     <td key={value.link}>
                                         <a href={`https://www.youtube.com/watch?v=${value.link}`} target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v={value.link}</a>
                                     </td>
@@ -113,7 +121,7 @@ class Home extends React.Component {
                                         {value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}
                                     </td>
                                     <td key={value.link + "-remove"} className="entity remove">
-                                        <ModalConfirmDelete objectType={"Video"} objectName={"PLACEHOLDER"} onConfirm={() => this.videoDelete(index)}/>
+                                        <ModalConfirmDelete objectType={"Video"} objectName={value.name} onConfirm={() => this.videoDelete(index)}/>
                                     </td>
                                 </tr>
                             )

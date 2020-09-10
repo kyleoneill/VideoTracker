@@ -1,4 +1,6 @@
 const {Video, User, Category} = require('../database');
+const https = require('https');
+const axios = require('axios');
 var jwt = require('jsonwebtoken');
 
 async function getUserId(username) {
@@ -8,6 +10,19 @@ async function getUserId(username) {
     }
     else {
         return new Error("User does not exist");
+    }
+}
+
+async function getVideoName(vidId) {
+    try {
+        var url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vidId}&key=${process.env.YOUTUBE_API}`
+        var res = await axios.get(url);
+        var title = res.data.items[0].snippet.title;
+        return title;
+    }
+    catch(e) {
+        console.log(e);
+        return e;
     }
 }
 
@@ -21,16 +36,24 @@ exports.create = async (req, res) => {
                 if(video === null) {
                     var userId = await getUserId(decoded.username);
                     var category = await Category.findOne({where: {name: req.query.categoryName}});
+                    var name = await getVideoName(req.query.link);
                     if(category !== null) {
-                        await Video.create({
+                        let newVideo = await Video.create({
                             link: req.query.link,
                             categoryId: category.id,
                             favorite: req.query.favorite,
-                            userId: userId
+                            userId: userId,
+                            name: name
                         });
                         console.log(`Added video to user ${decoded.username}`);
                         return res.status(200).send({
-                            message: "Video added"
+                            message: "Video added",
+                            video: {
+                                link: newVideo.link,
+                                favorite: newVideo.favorite,
+                                name: newVideo.name,
+                                categoryId: category.name
+                            }
                         });
                     }
                     else {
@@ -98,7 +121,7 @@ exports.getAll = async (req, res) => {
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
         if(!err) {
             let userId = await getUserId(decoded.username);
-            let videos = await Video.findAll({attributes: ['link', 'categoryId', 'favorite']},{where: {userId: userId}});
+            let videos = await Video.findAll({attributes: ['link', 'categoryId', 'favorite', 'name']},{where: {userId: userId}});
             let categories = await Category.findAll();
             videos.map((vid) => vid.categoryId = categories[vid.categoryId - 1].name);
             return res.status(200).send({

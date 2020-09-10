@@ -11,6 +11,7 @@ async function getCategoryId(categoryName) {
     }
 }
 
+//categoryName, token
 exports.create = async (req, res) => {
     var token = req.query.token;
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {

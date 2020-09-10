@@ -21,7 +21,9 @@ class Login extends React.Component {
     }
     toggleState = (event) => {
         this.setState({
-            signIn: !this.state.signIn
+            signIn: !this.state.signIn,
+            username: '',
+            password: ''
         });
     }
     handleUsernameChange = (event) => {
