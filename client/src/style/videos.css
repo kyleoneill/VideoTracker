@@ -1,0 +1,39 @@
+.videos-page table {
+    max-width: 100%;
+}
+
+.videos-page table.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.videos-page .entity {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.videos-page .remove {
+    color: red;
+}
+
+.videos-page .favorite {
+    color: #f0c243;
+}
+
+.videos-page .checkbox {
+    display: inline;
+}
+
+.videos-page .new-video {
+    display: inline;
+}
+
+.videos-page .nav > *{
+    text-align: center;
+    margin: 1rem 1rem 0rem 1rem;
+}
+
+.videos-page {
+    margin-left: 17%;
+    margin-right: 17%;
+}

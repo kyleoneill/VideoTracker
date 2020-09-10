@@ -17,28 +17,5 @@
 }
 
 .home-page .logout {
-    position: absolute;
-    right: 18%;
-}
-
-.home-page table {
-    max-width: 65%;
-}
-
-.home-page table.center {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.home-page .entity {
-    font-size: 2rem;
-    cursor: pointer;
-}
-
-.home-page .remove {
-    color: red;
-}
-
-.home-page .favorite {
-    color: #f0c243;
+    right: 0%;
 }
