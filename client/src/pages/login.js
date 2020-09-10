@@ -23,7 +23,8 @@ class Login extends React.Component {
         this.setState({
             signIn: !this.state.signIn,
             username: '',
-            password: ''
+            password: '',
+            checkPassword: ''
         });
     }
     handleUsernameChange = (event) => {
@@ -31,6 +32,9 @@ class Login extends React.Component {
     }
     handlePasswordChange = (event) => {
         this.setState({password: event.target.value});
+    }
+    handlePasswordCheck = (event) => {
+        this.setState({checkPassword: event.target.value});
     }
     dismissAlert = () => {
         this.setState({showAlert: false, alertText: "Error"});
@@ -57,8 +61,14 @@ class Login extends React.Component {
         }
         else {
             try {
-                let res = await createUser(this.state.username, this.state.password);
-                this.login(res.data.token);
+                if(this.state.password === this.state.checkPassword) {
+                    let res = await createUser(this.state.username, this.state.password);
+                    this.login(res.data.token);
+                }
+                else {
+                    this.setState({showAlert: true, alertText: "Password does not match password confirmation"});
+                    return
+                }
             }
             catch(err) {
                 if(err.response.status === 409) {
@@ -98,6 +108,12 @@ class Login extends React.Component {
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" value={this.state.password} onChange={this.handlePasswordChange}/>
                     </Form.Group>
+                    {!this.state.signIn &&
+                        <Form.Group controlId="login-form-password-check">
+                            <Form.Label>Confirm Password</Form.Label>
+                            <Form.Control type="password" placeholder="Password" value={this.state.checkPassword} onChange={this.handlePasswordCheck}/>
+                        </Form.Group>
+                    }
                     <Button variant="primary" onClick={this.handleSubmit}>{this.state.signIn ? "Submit" : "Create Account"}</Button>
                 </Form>
                 {this.state.signIn &&
