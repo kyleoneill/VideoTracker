@@ -9,6 +9,7 @@ import {
 } from '../api';
 import {
     Alert,
+    Button,
     Nav,
     Table
 } from 'react-bootstrap';
@@ -87,6 +88,7 @@ class Home extends React.Component {
                 <Nav className="nav">
                     <Nav.Item>
                         <NewVideo callback={this.handleNewVideo} categories={this.state.categories} />
+                        <Button variant="secondary" className="logout" onClick={this.props.handleLogout}>Logout</Button>
                     </Nav.Item>
                 </Nav>
                 <h3>Saved Videos - {this.state.username}</h3>
@@ -107,8 +109,12 @@ class Home extends React.Component {
                                         <a href={`https://www.youtube.com/watch?v=${value.link}`} target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v={value.link}</a>
                                     </td>
                                     <td key={value.categoryId}>{value.categoryId}</td>
-                                    <td key={value.link + value.favorite} onClick={() => this.toggleVideoFavorite(index)} className="entity favorite">{value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}</td>
-                                    <td key={value.link + "-remove"} className="entity remove"><ModalConfirmDelete objectType={"Video"} objectName={"PLACEHOLDER"} onConfirm={() => this.videoDelete(index)}/></td>
+                                    <td key={value.link + value.favorite} onClick={() => this.toggleVideoFavorite(index)} className="entity favorite">
+                                        {value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}
+                                    </td>
+                                    <td key={value.link + "-remove"} className="entity remove">
+                                        <ModalConfirmDelete objectType={"Video"} objectName={"PLACEHOLDER"} onConfirm={() => this.videoDelete(index)}/>
+                                    </td>
                                 </tr>
                             )
                         })}

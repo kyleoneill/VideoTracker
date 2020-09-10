@@ -21,7 +21,10 @@ class App extends React.Component {
     this.setState({token: token, username: username});
   }
   handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
     this.setState({token: ''});
+    window.location.reload();
   }
   render() {
     return (

@@ -12,6 +12,15 @@
     margin-bottom: 2%;
 }
 
+.home-page button {
+    margin-right: 15px;
+}
+
+.home-page .logout {
+    position: absolute;
+    right: 18%;
+}
+
 .home-page table {
     max-width: 65%;
 }
