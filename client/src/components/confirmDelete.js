@@ -22,7 +22,7 @@ const ModalConfirmDelete = ({objectType, objectName, onConfirm}) => {
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={onConfirm}>
+            <Button variant="danger" onClick={() => {onConfirm(); handleClose()}}>
               Delete
             </Button>
           </Modal.Footer>

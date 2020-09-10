@@ -15,7 +15,8 @@ import {
     getAllCategories,
     createVideo,
     deleteVideo,
-    setVideoFavorite
+    setVideoFavorite,
+    deleteCategory
 } from '../api';
 import Videos from '../pages/videos';
 import Settings from './settings/settings';
@@ -24,6 +25,15 @@ function parseYoutubeLink(link) {
     let splitLink = link.split("v=");
     let verify = splitLink[1].split('&');
     return verify[0]
+}
+
+function getIndexOfCategory(categoryName, categories) {
+    for(var i = 0; i < categories.length; i++) {
+        if(categories[i].name === categoryName) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 class Home extends React.Component {
@@ -76,6 +86,28 @@ class Home extends React.Component {
         videos.splice(index, 1);
         this.setState({videos: videos});
     }
+    categoryDelete = async (category) => {
+        let categories = this.state.categories;
+        let index = getIndexOfCategory(category, categories);
+        if(index !== -1) {
+            try {
+                await deleteCategory(this.props.token, category);
+                categories.splice(index, 1);
+                this.setState({categories: categories});
+            }
+            catch(e) {
+                if(e.response.status === 409) {
+                    this.setState({showAlert: true, alertText: "Cannot delete a category that is associated to saved videos"});
+                }
+                else {
+                    this.setState({showAlert: true, alertText: "Failed to delete category"});
+                }
+            }
+        }
+        else {
+            return new Error("Provided category does not exist");
+        }
+    }
     toggleVideoFavorite = async (index) => {
         let videos = this.state.videos;
         let video = videos[index]
@@ -110,7 +142,12 @@ class Home extends React.Component {
                         </nav>
                         <Switch>
                             <Route path="/settings">
-                                <Settings token={this.props.token} username={this.props.username} />
+                                <Settings
+                                    token={this.props.token}
+                                    username={this.props.username}
+                                    categories={this.state.categories}
+                                    categoryDelete={this.categoryDelete}
+                                />
                             </Route>
                             <Route path="/">
                                 <Videos 

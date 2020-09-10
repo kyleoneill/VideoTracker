@@ -28,7 +28,12 @@ class Settings extends React.Component {
                         </nav>
                         <Switch>
                             <Route path="/settings/config">
-                                <ConfigSettings token={this.props.token} username={this.props.username} />
+                                <ConfigSettings
+                                    token={this.props.token}
+                                    username={this.props.username}
+                                    categories={this.props.categories}
+                                    categoryDelete={this.props.categoryDelete}
+                                />
                             </Route>
                             <Route path="/settings/account">
                                 <AccountSettings token={this.props.token} username={this.props.username} />

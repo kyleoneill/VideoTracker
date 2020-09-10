@@ -10,6 +10,15 @@
     right: 0%;
 }
 
+.entity {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.remove {
+    color: red;
+}
+
 /* Top Navigation Bar */
 .home-page .top-nav-bar {
     overflow: hidden;

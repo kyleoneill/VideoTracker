@@ -7,15 +7,6 @@
     margin-right: auto;
 }
 
-.videos-page .entity {
-    font-size: 2rem;
-    cursor: pointer;
-}
-
-.videos-page .remove {
-    color: red;
-}
-
 .videos-page .favorite {
     color: #f0c243;
 }
