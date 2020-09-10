@@ -28,7 +28,13 @@
     display: inline;
 }
 
-.videos-page .nav > *{
+.videos-page .nav {
+    margin: auto;
+    width: 50%;
+    margin-bottom: 2%;
+}
+
+.videos-page .nav > * {
     text-align: center;
     margin: 1rem 1rem 0rem 1rem;
 }

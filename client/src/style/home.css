@@ -6,10 +6,30 @@
     padding-bottom: 2%;
 }
 
-.home-page .nav {
+.home-page .home-routing {
     margin: auto;
     width: 50%;
     margin-bottom: 2%;
+}
+
+.home-page .top-nav {
+    overflow: hidden;
+    max-width: 50%;
+    margin: auto;
+    margin-bottom: 1rem;
+}
+
+.home-page .top-nav > li {
+    display: inline;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.home-page .top-nav > li > * {
+    text-decoration: none;
 }
 
 .home-page button {
