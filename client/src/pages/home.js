@@ -10,8 +10,9 @@ import {
 import {
     Alert,
     Button,
+    FormCheck,
     Nav,
-    Table
+    Table,
 } from 'react-bootstrap';
 import NewVideo from '../components/modalNewVideo';
 import ModalConfirmDelete from '../components/confirmDelete';
@@ -31,7 +32,8 @@ class Home extends React.Component {
             showAlert: false,
             alertText: '',
             videos: [],
-            categories: []
+            categories: [],
+            filterByFavorites: false
         }
     }
     async componentDidMount() {
@@ -78,6 +80,9 @@ class Home extends React.Component {
         videos[index].favorite = !videos[index].favorite;
         this.setState({videos: videos});
     }
+    handleFilterFavorite = (e) => {
+        this.setState({filterByFavorites: e.target.checked});
+    }
     videoDelete = async (index) => {
         let videos = this.state.videos;
         await deleteVideo(videos[index].link, this.state.token);
@@ -98,6 +103,7 @@ class Home extends React.Component {
                     </Nav.Item>
                 </Nav>
                 <h3>Saved Videos - {this.state.username}</h3>
+                <FormCheck type="checkbox" label="Filter By Favorites" onChange={this.handleFilterFavorite}/>
                 <Table striped bordered className="center">
                     <thead>
                         <tr>
@@ -109,26 +115,35 @@ class Home extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.videos && this.state.videos.map((value, index) => {
+                        {this.state.videos && this.state.videos.filter(video => this.state.filterByFavorites ? video.favorite : true).map((value, index) => {
                             return (
-                                <tr key={index}>
-                                    <td key={value.link + "-name"}>{value.name}</td>
-                                    <td key={value.link}>
-                                        <a href={`https://www.youtube.com/watch?v=${value.link}`} target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v={value.link}</a>
-                                    </td>
-                                    <td key={value.categoryId}>{value.categoryId}</td>
-                                    <td key={value.link + value.favorite} onClick={() => this.toggleVideoFavorite(index)} className="entity favorite">
-                                        {value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}
-                                    </td>
-                                    <td key={value.link + "-remove"} className="entity remove">
-                                        <ModalConfirmDelete objectType={"Video"} objectName={value.name} onConfirm={() => this.videoDelete(index)}/>
-                                    </td>
-                                </tr>
+                                <VideoRow index={index} value={value} toggleVideoFavorite={this.toggleVideoFavorite} videoDelete={this.videoDelete}/>
                             )
                         })}
                     </tbody>
                 </Table>
             </div>
+        )
+    }
+}
+
+// TODO - clean this up
+class VideoRow extends React.Component {
+    render() {
+        return (
+            <tr key={this.props.index}>
+                <td key={this.props.value.link + "-name"}>{this.props.value.name}</td>
+                <td key={this.props.value.link}>
+                    <a href={`https://www.youtube.com/watch?v=${this.props.value.link}`} target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v={this.props.value.link}</a>
+                </td>
+                <td key={this.props.value.categoryId}>{this.props.value.categoryId}</td>
+                <td key={this.props.value.link + this.props.value.favorite} onClick={() => this.props.toggleVideoFavorite(this.props.index)} className="entity favorite">
+                    {this.props.value.favorite? String.fromCharCode(9733) : String.fromCharCode(9734)}
+                </td>
+                <td key={this.props.value.link + "-remove"} className="entity remove">
+                    <ModalConfirmDelete objectType={"Video"} objectName={this.props.value.name} onConfirm={() => this.props.videoDelete(this.props.index)}/>
+                </td>
+            </tr>
         )
     }
 }
