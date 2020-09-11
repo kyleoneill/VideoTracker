@@ -16,7 +16,8 @@ import {
     createVideo,
     deleteVideo,
     setVideoFavorite,
-    deleteCategory
+    deleteCategory,
+    createCategory
 } from '../api';
 import Videos from '../pages/videos';
 import Settings from './settings/settings';
@@ -61,14 +62,8 @@ class Home extends React.Component {
         try {
             let parsedLink = parseYoutubeLink(link);
             let res = await createVideo(parsedLink, category, false, this.props.token);
-            let newVideo = {
-                categoryId: res.data.video.categoryId,
-                favorite: res.data.video.favorite,
-                link: res.data.video.link,
-                name: res.data.video.name
-            };
             let videos = this.state.videos;
-            videos.push(newVideo);
+            videos.push(res.data.video);
             this.setState({videos: videos});
         }
         catch(e) {
@@ -85,6 +80,12 @@ class Home extends React.Component {
         await deleteVideo(videos[index].link, this.props.token);
         videos.splice(index, 1);
         this.setState({videos: videos});
+    }
+    categoryCreate = async (categoryName) => {
+        let res = await createCategory(this.props.token, categoryName);
+        let categories = this.state.categories;
+        categories.push(res.data.category);
+        this.setState({categories: categories});
     }
     categoryDelete = async (category) => {
         let categories = this.state.categories;
@@ -147,6 +148,7 @@ class Home extends React.Component {
                                     username={this.props.username}
                                     categories={this.state.categories}
                                     categoryDelete={this.categoryDelete}
+                                    categoryCreate={this.categoryCreate}
                                 />
                             </Route>
                             <Route path="/">

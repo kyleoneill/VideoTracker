@@ -12,6 +12,10 @@ Category.init({
     name: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
 }, {
     sequelize,

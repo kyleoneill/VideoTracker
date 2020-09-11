@@ -1,17 +1,7 @@
 const {Video, User, Category} = require('../database');
-const https = require('https');
+const {getUserId} = require('../common');
 const axios = require('axios');
 var jwt = require('jsonwebtoken');
-
-async function getUserId(username) {
-    var user = await User.findOne({where: {username: username}});
-    if(user != null) {
-        return user.id;
-    }
-    else {
-        return new Error("User does not exist");
-    }
-}
 
 async function getVideoName(vidId) {
     try {
@@ -122,7 +112,7 @@ exports.getAll = async (req, res) => {
         if(!err) {
             let userId = await getUserId(decoded.username);
             let videos = await Video.findAll({attributes: ['link', 'categoryId', 'favorite', 'name']},{where: {userId: userId}});
-            let categories = await Category.findAll();
+            let categories = await Category.findAll({where: {userId: userId}});
             videos.map((vid) => vid.categoryId = categories[vid.categoryId - 1].name);
             return res.status(200).send({
                 videos: videos

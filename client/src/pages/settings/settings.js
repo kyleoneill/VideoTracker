@@ -33,6 +33,7 @@ class Settings extends React.Component {
                                     username={this.props.username}
                                     categories={this.props.categories}
                                     categoryDelete={this.props.categoryDelete}
+                                    categoryCreate={this.props.categoryCreate}
                                 />
                             </Route>
                             <Route path="/settings/account">

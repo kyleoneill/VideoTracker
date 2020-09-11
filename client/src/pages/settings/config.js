@@ -3,6 +3,7 @@ import {
     Table
 } from 'react-bootstrap';
 import ModalConfirmDelete from '../../components/confirmDelete';
+import NewCategory from '../../components/modalNewCategory';
 
 class ConfigSettings extends React.Component {
     render() {
@@ -11,6 +12,7 @@ class ConfigSettings extends React.Component {
                 <h4>Config Settings for {this.props.username}</h4>
                 <div className="category-display">
                     <h5>Categories</h5>
+                    <NewCategory callback={this.props.categoryCreate} />
                     <Table striped bordered className="center">
                         <thead>
                             <tr>

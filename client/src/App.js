@@ -24,6 +24,7 @@ class App extends React.Component {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     this.setState({token: ''});
+    window.history.replaceState(null, '', '/');
     window.location.reload();
   }
   render() {

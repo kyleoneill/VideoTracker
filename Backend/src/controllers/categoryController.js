@@ -1,8 +1,9 @@
 const {Category, Video} = require('../database');
+const {getUserId} = require('../common');
 var jwt = require('jsonwebtoken');
 
-async function getCategoryId(categoryName) {
-    var category = await Category.findOne({where: {name: categoryName}});
+async function getCategoryId(categoryName, userId) {
+    var category = await Category.findOne({where: {name: categoryName, userId: userId}});
     if(category != null) {
         return category.id;
     }
@@ -17,13 +18,19 @@ exports.create = async (req, res) => {
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
         if(!err) {
             try {
-                let category = await Category.findOne({where: {name: req.query.categoryName}});
+                var userId = await getUserId(decoded.username);
+                let category = await Category.findOne({where: {name: req.query.categoryName, userId: userId}});
                 if(category === null) {
-                    await Category.create({
-                        name: req.query.categoryName
+                    let category = await Category.create({
+                        name: req.query.categoryName,
+                        userId: userId
                     });
                     return res.status(200).send({
-                        message: "Category added"
+                        message: "Category added",
+                        category: {
+                            name: category.name,
+                            createdAt: category.createdAt
+                        }
                     });
                 }
                 else {
@@ -59,11 +66,13 @@ exports.getOne = async (req, res) => {
     });
 }
 
+//token
 exports.getAll = async (req, res) => {
     var token = req.query.token;
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
         if(!err) {
-            let categories = await Category.findAll();
+            var userId = await getUserId(decoded.username);
+            let categories = await Category.findAll({attributes: ['name', 'createdAt']}, {where: {userId: userId}});
             return res.status(200).send({
                 categories: categories
             });
@@ -74,12 +83,14 @@ exports.getAll = async (req, res) => {
     });
 }
 
+//token, categoryName
 exports.deleteOne = async (req, res) => {
     var token = req.query.token;
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
         if(!err) {
             try {
-                let categoryId = await getCategoryId(req.query.categoryName);
+                var userId = await getUserId(decoded.username);
+                let categoryId = await getCategoryId(req.query.categoryName, userId);
                 if(typeof(categoryId) != 'number') {
                     return res.status(400).send({
                         message: "Category does not exist"
