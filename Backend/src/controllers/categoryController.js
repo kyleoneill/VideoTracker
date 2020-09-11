@@ -72,7 +72,10 @@ exports.getAll = async (req, res) => {
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
         if(!err) {
             var userId = await getUserId(decoded.username);
-            let categories = await Category.findAll({attributes: ['name', 'createdAt']}, {where: {userId: userId}});
+            let categories = await Category.findAll({
+                attributes: ['name', 'createdAt'],
+                where: {userId: userId}
+            });
             return res.status(200).send({
                 categories: categories
             });

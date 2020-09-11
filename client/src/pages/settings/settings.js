@@ -37,10 +37,10 @@ class Settings extends React.Component {
                                 />
                             </Route>
                             <Route path="/settings/account">
-                                <AccountSettings token={this.props.token} username={this.props.username} />
+                                <AccountSettings token={this.props.token} username={this.props.username} changePassword={this.props.changePassword}/>
                             </Route>
                             <Route path="/settings">
-                                <AccountSettings token={this.props.token} username={this.props.username} />
+                                <AccountSettings token={this.props.token} username={this.props.username} changePassword={this.props.changePassword}/>
                             </Route>
                         </Switch>
                     </div>

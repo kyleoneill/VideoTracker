@@ -70,3 +70,39 @@ exports.login = (req, res) => {
         }
     });
 };
+
+//newPassword, currentPassword, token
+exports.changePassword = (req, res) => {
+    var token = req.query.token;
+    jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
+        if(!err) {
+            try {
+                var user = await User.findOne({where: {username: decoded.username}});
+                var shasum = crypto.createHash('sha256');
+                var passwordToCheck = shasum.update(req.query.currentPassword + user.salt).digest('base64');
+                if(passwordToCheck === user.hashedPassword) {
+                    shasum = crypto.createHash('sha256');
+                    var newHashedPassword = shasum.update(req.query.newPassword + user.salt).digest('base64');
+                    user.hashedPassword = newHashedPassword;
+                    await user.save();
+                    return res.status(200).send({
+                        message: "Successfully changed password"
+                    });
+                }
+                else {
+                    return res.status(400).send({
+                        message: "The current password is incorrect"
+                    });
+                }
+            }
+            catch(e) {
+                res.status(400).send({
+                    message: "Failed to validate password"
+                });
+            }
+        }
+        else {
+            res.send(err);
+        }
+    });
+}

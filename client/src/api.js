@@ -9,6 +9,10 @@ exports.login = async (username, password) => {
     return axios.post(`/api/user/login?username=${username}&password=${password}`);
 }
 
+exports.changePassword = async (token, currentPassword, newPassword) => {
+    return axios.put(`/api/user/update_password?currentPassword=${currentPassword}&newPassword=${newPassword}&token=${token}`);
+}
+
 //Video
 exports.getAllVideos = async (token) => {
     return axios.get(`/api/video?token=${token}`);

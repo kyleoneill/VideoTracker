@@ -111,12 +111,24 @@ exports.getAll = async (req, res) => {
     jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
         if(!err) {
             let userId = await getUserId(decoded.username);
-            let videos = await Video.findAll({attributes: ['link', 'categoryId', 'favorite', 'name']},{where: {userId: userId}});
-            let categories = await Category.findAll({where: {userId: userId}});
-            videos.map((vid) => vid.categoryId = categories[vid.categoryId - 1].name);
-            return res.status(200).send({
-                videos: videos
+            let videos = await Video.findAll({
+                attributes: ['link', 'categoryId', 'favorite', 'name'],
+                where: {userId: userId}
             });
+            if(videos.length > 0) {
+                console.log(videos[0].name)
+                let categories = await Category.findAll({where: {userId: userId}});
+                videos.map((vid) => vid.categoryId = categories[vid.categoryId - 1].name);
+                return res.status(200).send({
+                    message: `Found ${videos.length} videos`,
+                    videos: videos
+                });
+            }
+            else {
+                return res.status(200).send({
+                    message: "No videos found"
+                });
+            }
         }
         else {
             res.send(err);

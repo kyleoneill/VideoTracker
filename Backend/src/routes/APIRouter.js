@@ -14,7 +14,7 @@ router.get('/', function(req, res) {
 
 router.post('/user/create', users.create);
 router.post('/user/login', users.login);
-//logout is not needed. When logging out just delete the token on the client side
+router.put('/user/update_password', users.changePassword);
 
 router.post('/video/create', videos.create);
 router.put('/video/set_favorite', videos.setFavorite);

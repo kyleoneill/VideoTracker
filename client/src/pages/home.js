@@ -17,7 +17,8 @@ import {
     deleteVideo,
     setVideoFavorite,
     deleteCategory,
-    createCategory
+    createCategory,
+    changePassword
 } from '../api';
 import Videos from '../pages/videos';
 import Settings from './settings/settings';
@@ -45,6 +46,7 @@ class Home extends React.Component {
             categories: [],
             showAlert: false,
             alertText: '',
+            alertVariant: ''
         }
     }
     async componentDidMount() {
@@ -54,7 +56,7 @@ class Home extends React.Component {
             this.setState({videos: videos.data.videos, categories: categories.data.categories});
         }
         catch(e) {
-            this.setState({showAlert: true, alertText: "Failed to get user data"});
+            this.setState({showAlert: true, alertVariant: 'danger', alertText: "Failed to get user data"});
         }
 
     }
@@ -68,10 +70,10 @@ class Home extends React.Component {
         }
         catch(e) {
             if(e.response.status === 400) {
-                this.setState({showAlert: true, alertText: "This video is already in your list."});
+                this.setState({showAlert: true, alertVariant: 'danger', alertText: "This video is already in your list."});
             }
             else {
-                this.setState({showAlert: true, alertText: e});
+                this.setState({showAlert: true, alertVariant: 'danger', alertText: e});
             }
         }
     }
@@ -98,10 +100,10 @@ class Home extends React.Component {
             }
             catch(e) {
                 if(e.response.status === 409) {
-                    this.setState({showAlert: true, alertText: "Cannot delete a category that is associated to saved videos"});
+                    this.setState({showAlert: true, alertVariant: 'danger', alertText: "Cannot delete a category that is associated to saved videos"});
                 }
                 else {
-                    this.setState({showAlert: true, alertText: "Failed to delete category"});
+                    this.setState({showAlert: true, alertVariant: 'danger', alertText: "Failed to delete category"});
                 }
             }
         }
@@ -117,12 +119,21 @@ class Home extends React.Component {
         this.setState({videos: videos});
     }
     dismissAlert = () => {
-        this.setState({showAlert: false, alertText: "Error"});
+        this.setState({showAlert: false, alertVariant: '', alertText: "Error"});
+    }
+    changePassword = async (currentPassword, newPassword) => {
+        try {
+            await changePassword(this.props.token, currentPassword, newPassword);
+            this.setState({showAlert: true, alertVariant: 'success', alertText: "Successfully changed password"});
+        }
+        catch {
+            this.setState({showAlert: true, alertVariant: 'danger', alertText: "Failed to change password"});
+        }
     }
     render() {
         return(
             <div className="home-page">
-                <Alert variant="danger" onClose={this.dismissAlert} show={this.state.showAlert} dismissible>
+                <Alert variant={this.state.alertVariant} onClose={this.dismissAlert} show={this.state.showAlert} dismissible>
                     <Alert.Heading>{this.state.alertText}</Alert.Heading>
                 </Alert>
                 <h1>{this.props.appName}</h1>
@@ -149,6 +160,7 @@ class Home extends React.Component {
                                     categories={this.state.categories}
                                     categoryDelete={this.categoryDelete}
                                     categoryCreate={this.categoryCreate}
+                                    changePassword={this.changePassword}
                                 />
                             </Route>
                             <Route path="/">
