@@ -116,7 +116,6 @@ exports.getAll = async (req, res) => {
                 where: {userId: userId}
             });
             if(videos.length > 0) {
-                console.log(videos[0].name)
                 let categories = await Category.findAll({where: {userId: userId}});
                 videos.map((vid) => vid.categoryId = categories[vid.categoryId - 1].name);
                 return res.status(200).send({
