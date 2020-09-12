@@ -15,6 +15,14 @@ async function getVideoName(vidId) {
         return e;
     }
 }
+function matchCategoryIdToName(id, categories) {
+    for(var i = 0; i < categories.length; i++) {
+        if(categories[i].id === id) {
+            return categories[i].name
+        }
+    }
+    return null
+}
 
 //token, link, categoryName, favorite
 exports.create = async (req, res) => {
@@ -117,7 +125,9 @@ exports.getAll = async (req, res) => {
             });
             if(videos.length > 0) {
                 let categories = await Category.findAll({where: {userId: userId}});
-                videos.map((vid) => vid.categoryId = categories[vid.categoryId - 1].name);
+                videos.map((vid) => {
+                    vid.categoryId = matchCategoryIdToName(vid.categoryId, categories);
+                });
                 return res.status(200).send({
                     message: `Found ${videos.length} videos`,
                     videos: videos
