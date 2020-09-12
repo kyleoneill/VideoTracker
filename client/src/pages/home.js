@@ -52,8 +52,20 @@ class Home extends React.Component {
     async componentDidMount() {
         try {
             let videos = await getAllVideos(this.props.token);
+            if(videos.data.videos === undefined) {
+                videos = [];
+            }
+            else {
+                videos = videos.data.videos
+            }
             let categories = await getAllCategories(this.props.token);
-            this.setState({videos: videos.data.videos, categories: categories.data.categories});
+            if(categories.data.categories === undefined) {
+                categories = [];
+            }
+            else {
+                categories = categories.data.categories
+            }
+            this.setState({videos: videos, categories: categories});
         }
         catch(e) {
             this.setState({showAlert: true, alertVariant: 'danger', alertText: "Failed to get user data"});
