@@ -26,10 +26,11 @@ class App extends React.Component {
   componentDidMount() {
     var token = localStorage.getItem('token');
     var username = localStorage.getItem('username');
-    if(token !== null) {
+    if(token !== null && token !== "null") {
       verifyToken(token).then((res) => {
         if(res.data.tokenValid) {
           token = res.data.newToken;
+          username = res.data.username;
         }
         else {
           clearLocalStorage();

@@ -116,12 +116,15 @@ exports.verifyToken = (req, res) => {
             var token = generateToken(decoded.username);
             return res.status(200).send({
                 tokenValid: true,
-                newToken: token
+                newToken: token,
+                username: decoded.username
             });
         }
         else {
             return res.status(401).send({
                 tokenValid: false,
+                newToken: null,
+                username: null,
                 err: err
             })
         }
