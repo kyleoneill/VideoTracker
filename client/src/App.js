@@ -2,6 +2,17 @@ import React from 'react';
 import './style/App.css';
 import Login from './pages/login';
 import Home from './pages/home';
+import {verifyToken} from './api';
+
+function clearLocalStorage() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+}
+
+function setLocalStorage(token, username) {
+  localStorage.setItem('token', token);
+  localStorage.setItem('username', username);
+}
 
 const appName = "Norgannon";
 class App extends React.Component {
@@ -13,16 +24,38 @@ class App extends React.Component {
     }
   }
   componentDidMount() {
-    const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
-    this.setState({token: token, username: username});
+    var token = localStorage.getItem('token');
+    var username = localStorage.getItem('username');
+    if(token !== null) {
+      verifyToken(token).then((res) => {
+        if(res.data.tokenValid) {
+          token = res.data.newToken;
+        }
+        else {
+          clearLocalStorage();
+          token = null;
+          username = null;
+        }
+      }).catch((err) => {
+        //setState - some alert notifying about the log-out
+        clearLocalStorage();
+        token = null;
+        username = null;
+      }).finally(() => {
+        setLocalStorage(token, username);
+        this.setState({
+          token: token,
+          username: username
+        })
+      });
+    }
   }
   handleLogin = (token, username) => {
+    setLocalStorage(token, username);
     this.setState({token: token, username: username});
   }
   handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
+    clearLocalStorage();
     this.setState({token: ''});
     window.history.replaceState(null, '', '/');
     window.location.reload();

@@ -102,7 +102,28 @@ exports.changePassword = (req, res) => {
             }
         }
         else {
-            res.send(err);
+            return res.status(401).send({
+                message: err
+            });
+        }
+    });
+}
+
+exports.verifyToken = (req, res) => {
+    var token = req.query.token;
+    jwt.verify(token, process.env.BACKEND_SECRET, async function(err, decoded) {
+        if(!err) {
+            var token = generateToken(decoded.username);
+            return res.status(200).send({
+                tokenValid: true,
+                newToken: token
+            });
+        }
+        else {
+            return res.status(401).send({
+                tokenValid: false,
+                err: err
+            })
         }
     });
 }

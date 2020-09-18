@@ -13,6 +13,10 @@ export async function changePassword(token, currentPassword, newPassword) {
     return axios.put(`/api/user/update_password?currentPassword=${currentPassword}&newPassword=${newPassword}&token=${token}`);
 }
 
+export async function verifyToken(token) {
+    return axios.get(`/api/user/verify_token?token=${token}`);
+}
+
 //Video
 export async function getAllVideos(token) {
     return axios.get(`/api/video?token=${token}`);

@@ -11,10 +11,12 @@ router.get('/', function(req, res) {
 });
 
 // TODO - there is a lot of boilerplate in the methods, can I reuse code here?
+//Failed token check should return a 401, not just the bare error
 
 router.post('/user/create', users.create);
 router.post('/user/login', users.login);
 router.put('/user/update_password', users.changePassword);
+router.get('/user/verify_token', users.verifyToken);
 
 router.post('/video/create', videos.create);
 router.put('/video/set_favorite', videos.setFavorite);
